@@ -54,56 +54,56 @@ class OTMWrapper:
         if self.conn.pid is not None:
             return self.otm.get_current_time()
 
-    # def show_network(self, linewidth=1):
-    #     """ Plot the network using node locations."""
+    def show_network(self, linewidth=1):
+        """ Plot the network using node locations."""
 
-    #     fig, ax = plt.subplots()
+        fig, ax = plt.subplots()
 
-    #     nodes = {}
-    #     for node_id in self.otm.scenario().node_ids():
-    #         node = self.otm.scenario().get_node(node_id)
-    #         nodes[node_id] = {'x': node.get_x(), 'y': node.get_y()}
+        nodes = {}
+        for node_id in self.otm.scenario().node_ids():
+            node = self.otm.scenario().get_node(node_id)
+            nodes[node_id] = {'x': node.get_x(), 'y': node.get_y()}
 
-    #     lines = []
-    #     minX = float('Inf')
-    #     maxX = -float('Inf')
-    #     minY = float('Inf')
-    #     maxY = -float('Inf')
-    #     for link_id in self.otm.scenario().network().link_ids():
+        lines = []
+        minX = float('Inf')
+        maxX = -float('Inf')
+        minY = float('Inf')
+        maxY = -float('Inf')
+        for link_id in self.otm.scenario().network().link_ids():
 
-    #         link = self.otm.scenario().get_link(link_id)
+            link = self.otm.scenario().get_link(link_id)
 
-    #         start_point = nodes[link.get_start_node_id()]
-    #         end_point = nodes[link.get_end_node_id()]
+            start_point = nodes[link.get_start_node_id()]
+            end_point = nodes[link.get_end_node_id()]
 
-    #         p0 = (start_point['x'], start_point['y'])
-    #         p1 = (end_point['x'], end_point['y'])
-    #         lines.append([p0, p1])
+            p0 = (start_point['x'], start_point['y'])
+            p1 = (end_point['x'], end_point['y'])
+            lines.append([p0, p1])
 
-    #         minX = min([minX, p0[0], p1[0]])
-    #         maxX = max([maxX, p0[0], p1[0]])
-    #         minY = min([minY, p0[1], p1[1]])
-    #         maxY = max([maxY, p0[1], p1[1]])
+            minX = min([minX, p0[0], p1[0]])
+            maxX = max([maxX, p0[0], p1[0]])
+            minY = min([minY, p0[1], p1[1]])
+            maxY = max([maxY, p0[1], p1[1]])
 
-    #     all_colors = [k for k, v in pltc.cnames.items()]
-    #     colors = sample(all_colors, len(lines))
-    #     lc = LineCollection(lines, colors=colors)
-    #     lc.set_linewidths(linewidth)
-    #     ax.add_collection(lc)
+        all_colors = [k for k, v in pltc.cnames.items()]
+        colors = sample(all_colors, len(lines))
+        lc = LineCollection(lines, colors=colors)
+        lc.set_linewidths(linewidth)
+        ax.add_collection(lc)
 
-    #     dY = maxY - minY
-    #     dX = maxX - minX
+        dY = maxY - minY
+        dX = maxX - minX
 
-    #     if (dY > dX):
-    #         ax.set_ylim((minY, maxY))
-    #         c = (maxX + minX) / 2
-    #         ax.set_xlim((c - dY / 2, c + dY / 2))
-    #     else:
-    #         ax.set_xlim((minX, maxX))
-    #         c = (maxY + minY) / 2
-    #         ax.set_ylim((c - dX / 2, c + dX / 2))
+        if (dY > dX):
+            ax.set_ylim((minY, maxY))
+            c = (maxX + minX) / 2
+            ax.set_xlim((c - dY / 2, c + dY / 2))
+        else:
+            ax.set_xlim((minX, maxX))
+            c = (maxY + minY) / 2
+            ax.set_ylim((c - dX / 2, c + dX / 2))
 
-    #     plt.draw()
+        plt.draw()
 
     # run a simulation
     def run(self, start_time=0., duration=3600., output_dt=30.):
@@ -130,10 +130,10 @@ class OTMWrapper:
         link_end = []
         link_is_source = []
         link_is_sink = []
-        # link_capacity = []
-        # link_ffspeed = []
-        # link_jamdensity = []
-        # link_travel_time = []
+        link_capacity = []
+        link_ffspeed = []
+        link_jamdensity = []
+        link_travel_time = []
         for link_id in self.otm.scenario().link_ids():
             link = self.otm.scenario().get_link(link_id)
             link_ids.append(link_id)
@@ -143,22 +143,22 @@ class OTMWrapper:
             link_end.append(link.get_end_node_id())
             link_is_source.append(link.get_is_source())
             link_is_sink.append(link.get_is_sink())
-            # link_capacity.append(link.get_capacity_vphpl())
-            # link_ffspeed.append(link.get_ffspeed_kph())
-            # link_jamdensity.append(link.get_jam_density_vpkpl())
-            # link_travel_time.append(link.get_full_length() * 3.6 / link.get_ffspeed_kph())
+            link_capacity.append(link.get_capacity_vphpl())
+            link_ffspeed.append(link.get_ffspeed_kph())
+            link_jamdensity.append(link.get_jam_density_vpkpl())
+            link_travel_time.append(link.get_full_length() * 3.6 / link.get_ffspeed_kph())
 
         return pd.DataFrame(data={'id': link_ids,'length_meter': link_lengths,'lanes': link_lanes,'start_node': link_start,'end_node': link_end,'is_source': link_is_source,'is_sink': link_is_sink}) #,'capacity_vphpl': link_capacity,'speed_kph': link_ffspeed,'max_vpl': link_jamdensity,'travel_time_sec': link_travel_time})
 
-    # def to_networkx(self):
-    #     """ Creates a networkx graph."""
-    #     G = nx.MultiDiGraph()
-    #     for node_id in self.otm.scenario().node_ids():
-    #         node = self.otm.scenario().get_node(node_id)
-    #         G.add_node(node_id, pos=(node.get_x(), node.get_y))
-    #     for link_id in self.otm.scenario().link_ids():
-    #         link = self.otm.scenario().get_link(link_id)
-    #         G.add_edge(link.get_start_node_id(),link.get_end_node_id(), id=link_id)
+    def to_networkx(self):
+        """ Creates a networkx graph."""
+        G = nx.MultiDiGraph()
+        for node_id in self.otm.scenario().node_ids():
+            node = self.otm.scenario().get_node(node_id)
+            G.add_node(node_id, pos=(node.get_x(), node.get_y))
+        for link_id in self.otm.scenario().link_ids():
+            link = self.otm.scenario().get_link(link_id)
+            G.add_edge(link.get_start_node_id(),link.get_end_node_id(), id=link_id)
     #     return G
 
     def get_state_trajectory(self):
@@ -205,19 +205,19 @@ class OTMWrapper:
                 if (classname == "OutputLinkVehicles"):
                     X['vehs'][i, :] = np.array(list(z.get_values()))
 
-        # X['speed_kph'] = np.empty([num_links, num_time])
-        # for i in range(len(link_list)):
-        #     link = self.otm.scenario().get_link(link_list[i])
-        #     if link.get_is_source():
-        #         X['speed_kph'][i, :] = np.nan;
-        #     else:
-        #         ffspeed_kph = link.get_ffspeed_kph()
-        #         link_length_km = link.get_full_length() / 1000.0;
+        X['speed_kph'] = np.empty([num_links, num_time])
+        for i in range(len(link_list)):
+            link = self.otm.scenario().get_link(link_list[i])
+            if link.get_is_source():
+                X['speed_kph'][i, :] = np.nan;
+            else:
+                ffspeed_kph = link.get_ffspeed_kph()
+                link_length_km = link.get_full_length() / 1000.0;
 
-        #         with np.errstate(divide='ignore', invalid='ignore'):
-        #             speed_kph = np.nan_to_num(link_length_km * np.divide(X['flows_vph'][i], X['vehs'][i]));
-        #         speed_kph[speed_kph > ffspeed_kph] = ffspeed_kph;
-        #         X['speed_kph'][i] = speed_kph;
+                with np.errstate(divide='ignore', invalid='ignore'):
+                    speed_kph = np.nan_to_num(link_length_km * np.divide(X['flows_vph'][i], X['vehs'][i]));
+                speed_kph[speed_kph > ffspeed_kph] = ffspeed_kph;
+                X['speed_kph'][i] = speed_kph;
 
         return X
 
@@ -290,9 +290,9 @@ class OTMWrapper:
         time = np.loadtxt(timefile, delimiter=',')
         return (data, cols, time)
 
-    # def lineplot(self,time, data, cols, title=""):
-    #     plt.figure(figsize=(10, 4))
-    #     plt.plot(time, data)
-    #     plt.legend([col['as_str'] for col in cols])
-    #     plt.grid()
-    #     plt.title(title)
+    def lineplot(self,time, data, cols, title=""):
+        plt.figure(figsize=(10, 4))
+        plt.plot(time, data)
+        plt.legend([col['as_str'] for col in cols])
+        plt.grid()
+        plt.title(title)
